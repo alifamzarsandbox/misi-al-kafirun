@@ -17,7 +17,7 @@ const CONFIG = {
 
   // URL Web App Google Apps Script
   // Masukkan URL Web App anda di sini selepas selesai proses deployment (cth: https://script.google.com/macros/s/AKfycb.../exec)
-  API_URL: "PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE",
+  API_URL: "https://script.google.com/macros/s/AKfycbwHxajH30k5sgLBeMWZwwJdytsy-xbEQItJKSTAV7m-CQPud2T2oGTCOB7lr7Jb1b2Rbw/exec",
 
   // Tetapan Audio & Efek
   SOUND_ENABLED_DEFAULT: true,
