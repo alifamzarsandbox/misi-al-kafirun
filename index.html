@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ms" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Misi Al-Kafirun: Cabaran Hafazan Tahun 3 - Permainan kuiz interaktif pendidikan Islam KSSR untuk murid sekolah rendah.">
+  <meta name="theme-color" content="#2455A4">
+  <title>MISI AL-KAFIRUN: Cabaran Hafazan Tahun 3</title>
+
+  <!-- Google Fonts: Fredoka & Nunito (UI) + Amiri (Quranic Arabic) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background Animated Shapes / Islamic Stars -->
+  <div class="bg-decorations" aria-hidden="true">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="star-float star-f1">✦</div>
+    <div class="star-float star-f2">★</div>
+    <div class="star-float star-f3">✦</div>
+    <div class="star-float star-f4">★</div>
+  </div>
+
+  <!-- Header Nav (Sound Toggle & Quick Links) -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="header-logo" id="btn-logo-home" title="Ke Halaman Utama">
+        <span class="logo-icon">📖</span>
+        <span class="logo-text">MISI AL-KAFIRUN</span>
+      </div>
+      <div class="header-actions">
+        <button id="btn-sound-toggle" class="btn-icon" aria-label="Buka atau tutup bunyi" title="Bunyi">
+          <span id="sound-icon">🔊</span>
+        </button>
+        <button id="btn-show-surah-modal" class="btn-pill" title="Ulangkaji Surah Al-Kafirun">
+          <span>📖 Ulangkaji Surah</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main App Container -->
+  <main class="app-main">
+
+    <!-- =========================================================
+         SKRIN A: HALAMAN UTAMA (HOME)
+         ========================================================= -->
+    <section id="screen-home" class="screen active">
+      <div class="card home-card">
+        <div class="hero-badge">
+          <span class="badge-tag">Kelas Ustaz Alif</span>
+        </div>
+
+        <div class="hero-illustration">
+          <!-- SVG Adventure Badge -->
+          <svg class="hero-svg" viewBox="0 0 240 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="120" cy="140" rx="90" ry="24" fill="#E2E8F0" opacity="0.6"/>
+            <!-- Open Quran / Book -->
+            <path d="M120 70 C120 70 85 55 45 60 C40 61 36 65 36 70 L36 125 C36 130 40 134 45 133 C85 125 120 140 120 140 Z" fill="#63C7F2"/>
+            <path d="M120 70 C120 70 155 55 195 60 C200 61 204 65 204 70 L204 125 C204 130 200 134 195 133 C155 125 120 140 120 140 Z" fill="#2455A4"/>
+            <!-- Pages details -->
+            <path d="M120 75 C120 75 88 62 50 67 L50 123 C88 118 120 132 120 132 Z" fill="#FFFFFF" opacity="0.9"/>
+            <path d="M120 75 C120 75 152 62 190 67 L190 123 C152 118 120 132 120 132 Z" fill="#F8FAFC" opacity="0.9"/>
+            <!-- Book Spine Bookmark -->
+            <path d="M116 70 L124 70 L124 148 L120 144 L116 148 Z" fill="#FFD166"/>
+            <!-- Golden Star Badge -->
+            <circle cx="120" cy="40" r="24" fill="#FFD166" stroke="#FFFFFF" stroke-width="3"/>
+            <path d="M120 23 L124.5 33.5 L136 34.5 L127.5 42 L130 53 L120 47 L110 53 L112.5 42 L104 34.5 L115.5 33.5 Z" fill="#FFFFFF"/>
+            <!-- Sparkles -->
+            <circle cx="48" cy="42" r="5" fill="#69D391"/>
+            <circle cx="192" cy="46" r="6" fill="#FFD166"/>
+          </svg>
+        </div>
+
+        <h1 class="game-title">MISI AL-KAFIRUN</h1>
+        <p class="game-subtitle">Cabaran Hafazan & Maksud Tahun 3</p>
+
+        <div class="info-bubble">
+          <span class="info-icon">🎯</span>
+          <p>Kuasai susunan ayat 1 hingga 6, sambungan kalimah, dan fahami maksud Surah Al-Kafirun dengan seronok!</p>
+        </div>
+
+        <div class="rules-pill">
+          <span>⚡ 10 Cabaran Rawak</span>
+          <span>⭐ 100 Mata / Soalan</span>
+          <span>🏆 Top 10 Murid</span>
+        </div>
+
+        <div class="home-button-group">
+          <button id="btn-home-start" class="btn btn-primary btn-lg pulse-hover">
+            <span class="btn-icon-text">🚀</span> MULA MISI
+          </button>
+          <button id="btn-home-review" class="btn btn-review btn-lg">
+            <span class="btn-icon-text">📖</span> ULANGKAJI SURAH AL&#8209;KAFIRUN
+          </button>
+          <button id="btn-home-leaderboard" class="btn btn-secondary btn-lg">
+            <span class="btn-icon-text">🏆</span> LEADERBOARD TOP 10
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SKRIN B: MASUKKAN NAMA PEMAIN (NAME INPUT)
+         ========================================================= -->
+    <section id="screen-name" class="screen">
+      <div class="card card-narrow">
+        <button id="btn-back-name-to-home" class="btn-back" title="Kembali ke Halaman Utama">
+          ← Kembali
+        </button>
+
+        <div class="card-icon-header">
+          <span class="big-avatar">🎖️</span>
+        </div>
+
+        <h2 class="card-title">Siapa Nama Wira?</h2>
+        <p class="card-desc">Sila masukkan nama pendek anda untuk merekod markah dalam Papan Juara Hafazan.</p>
+
+        <form id="form-player-name" class="name-form" onsubmit="return false;">
+          <div class="form-group">
+            <label for="input-player-name" class="form-label">Nama Pendek Murid:</label>
+            <input 
+              type="text" 
+              id="input-player-name" 
+              class="input-name" 
+              placeholder="Contoh: Aiman / Nurul"
+              maxlength="20"
+              autocomplete="off"
+              spellcheck="false"
+              required
+            >
+            <div id="name-error-msg" class="error-msg" aria-live="polite"></div>
+          </div>
+
+          <div class="avatar-selection-box">
+            <span class="selection-title">Pilih Ikon Wira Anda:</span>
+            <div class="avatar-grid">
+              <button type="button" class="btn-avatar selected" data-avatar="🌟" title="Wira Bintang">🌟</button>
+              <button type="button" class="btn-avatar" data-avatar="🧕" title="Wira Muslimah">🧕</button>
+              <button type="button" class="btn-avatar" data-avatar="👦" title="Wira Muslim">👦</button>
+              <button type="button" class="btn-avatar" data-avatar="👑" title="Wira Mahkota">👑</button>
+              <button type="button" class="btn-avatar" data-avatar="🚀" title="Wira Angkasa">🚀</button>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit-name" class="btn btn-primary btn-block btn-lg">
+            TERUSKAN ➔
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SKRIN C: TAKLIMAT MISI (CATEGORIES BRIEFING)
+         ========================================================= -->
+    <section id="screen-briefing" class="screen">
+      <div class="card">
+        <div class="hero-badge">
+          <span class="badge-tag">WIRA: <span id="briefing-player-name">Aiman</span></span>
+        </div>
+
+        <h2 class="card-title">Taklimat Misi Al-Kafirun</h2>
+        <p class="card-desc">Permainan ini menguji kefahaman dan hafazan anda melalui 3 kategori misi:</p>
+
+        <div class="categories-grid">
+          <div class="category-card cat-susun">
+            <div class="cat-icon">🧩</div>
+            <h3 class="cat-title">SUSUN AYAT</h3>
+            <p class="cat-desc">Kenal pasti urutan nombor ayat 1 hingga 6 serta ayat sebelum dan selepas.</p>
+          </div>
+
+          <div class="category-card cat-sambung">
+            <div class="cat-icon">🔗</div>
+            <h3 class="cat-title">SAMBUNG AYAT</h3>
+            <p class="cat-desc">Lengkapkan potongan kalimah dan sambungan ayat Surah Al-Kafirun yang betul.</p>
+          </div>
+
+          <div class="category-card cat-fahami">
+            <div class="cat-icon">💡</div>
+            <h3 class="cat-title">FAHAMI MAKSUD</h3>
+            <p class="cat-desc">Fahami terjemahan setiap ayat dan pengajaran akidah yang mudah.</p>
+          </div>
+        </div>
+
+        <div class="briefing-points">
+          <div class="point-item">
+            <span class="point-bullet">✓</span>
+            <span>Tepat <strong>10 cabaran</strong> rawak bagi setiap permainan.</span>
+          </div>
+          <div class="point-item">
+            <span class="point-bullet">✓</span>
+            <span>Setiap jawapan betul mendapat <strong>100 mata</strong>.</span>
+          </div>
+          <div class="point-item">
+            <span class="point-bullet">✓</span>
+            <span>Skor penuh ialah <strong>1,000 mata</strong>. Ambil masa dan baca dengan cermat!</span>
+          </div>
+        </div>
+
+        <div class="briefing-actions">
+          <button id="btn-start-quiz" class="btn btn-primary btn-lg btn-block pulse-hover">
+            MULA BERMAIN SEKARANG 🚀
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SKRIN D: SKRIN KUIZ (QUIZ INTERACTION)
+         ========================================================= -->
+    <section id="screen-quiz" class="screen">
+      <div class="quiz-container">
+
+        <!-- Top Status Bar -->
+        <div class="quiz-status-bar">
+          <div class="status-left">
+            <span class="question-number-badge" id="quiz-question-number">SOALAN 1/10</span>
+            <span class="category-pill" id="quiz-category-pill">Susun Ayat</span>
+          </div>
+          <div class="status-right">
+            <div class="live-score-pill">
+              <span class="score-star">⭐</span>
+              <span id="quiz-live-score">0</span> <span class="score-unit">Mata</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar-track" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar-fill" id="quiz-progress-fill" style="width: 10%;"></div>
+        </div>
+
+        <!-- Question Card -->
+        <div class="card quiz-card">
+          <!-- Question text in Malay -->
+          <h2 class="question-title" id="quiz-question-text">
+            Ayat manakah yang merupakan ayat pertama Surah Al-Kafirun?
+          </h2>
+
+          <!-- Answer options (4 touch-friendly buttons) -->
+          <div class="options-grid" id="quiz-options-container" role="radiogroup" aria-label="Pilihan Jawapan">
+            <!-- Buttons dynamically populated by script.js -->
+          </div>
+
+          <!-- Post-Answer Feedback Card (hidden until an option is selected) -->
+          <div class="feedback-card hidden" id="quiz-feedback-card" aria-live="assertive">
+            <div class="feedback-header" id="quiz-feedback-header">
+              <span class="feedback-icon" id="quiz-feedback-icon">🎉</span>
+              <span class="feedback-title" id="quiz-feedback-title">Tahniah! Jawapan Anda Betul!</span>
+            </div>
+
+            <div class="feedback-body">
+              <p class="feedback-explanation" id="quiz-feedback-explanation">
+                Penerangan ringkas pembelajaran mengenai ayat ini.
+              </p>
+            </div>
+
+            <div class="feedback-actions">
+              <button id="btn-next-question" class="btn btn-primary btn-lg pulse-hover">
+                SETERUSNYA ➔
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SKRIN E: SKRIN KEPUTUSAN (RESULTS)
+         ========================================================= -->
+    <section id="screen-result" class="screen">
+      <div class="card result-card">
+        
+        <div class="result-badge-top">
+          <span class="result-tag">TAHNIAH WIRA!</span>
+        </div>
+
+        <h1 class="result-title">MISI SELESAI!</h1>
+        <p class="result-player-name">Syabas, <span id="result-display-name">Wira</span>!</p>
+
+        <!-- Star Rating Display -->
+        <div class="stars-rating-container" id="result-stars-box">
+          <span class="result-star star-1">★</span>
+          <span class="result-star star-2">★</span>
+          <span class="result-star star-3">★</span>
+        </div>
+
+        <!-- Score Big Badge -->
+        <div class="result-score-circle">
+          <div class="score-main" id="result-total-score">1000</div>
+          <div class="score-max">/ 1000 MATA</div>
+        </div>
+
+        <!-- Feedback Message based on Score -->
+        <div class="result-message-box">
+          <h3 class="result-headline" id="result-headline-text">Hebat! Anda Juara Hafazan!</h3>
+          <p class="result-subtext" id="result-subtext-text">
+            Anda telah menguasai ayat dan maksud Surah Al-Kafirun dengan cemerlang.
+          </p>
+        </div>
+
+        <!-- Performance Stats Chips -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-icon">✅</span>
+            <span class="stat-value" id="result-correct-count">10 / 10</span>
+            <span class="stat-label">Jawapan Betul</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🎯</span>
+            <span class="stat-value" id="result-accuracy-pct">100%</span>
+            <span class="stat-label">Ketepatan</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">⭐</span>
+            <span class="stat-value" id="result-gained-pts">1000</span>
+            <span class="stat-label">Mata Terkumpul</span>
+          </div>
+        </div>
+
+        <!-- Score Submission Status to Google Apps Script -->
+        <div class="cloud-sync-status" id="result-sync-status">
+          <div class="sync-spinner" id="sync-spinner"></div>
+          <span class="sync-text" id="sync-text">Menyimpan keputusan ke papan pendahulu...</span>
+          <button id="btn-retry-sync" class="btn-retry hidden">Cuba Semula</button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="result-actions-grid">
+          <button id="btn-play-again" class="btn btn-primary btn-lg">
+            🔄 MAIN LAGI
+          </button>
+          <button id="btn-view-leaderboard" class="btn btn-secondary btn-lg">
+            🏆 LEADERBOARD TOP 10
+          </button>
+          <button id="btn-back-home" class="btn btn-tertiary">
+            🏠 KEMBALI KE MENU
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SKRIN F: LEADERBOARD TOP 10
+         ========================================================= -->
+    <section id="screen-leaderboard" class="screen">
+      <div class="card leaderboard-card">
+        <div class="leaderboard-header">
+          <button id="btn-back-from-leaderboard" class="btn-back" title="Kembali">
+            ← Kembali
+          </button>
+          <div class="leaderboard-title-group">
+            <h2 class="card-title">JUARA MISI AL-KAFIRUN</h2>
+            <p class="card-desc">10 Markah Tertinggi Terkumpul</p>
+          </div>
+          <button id="btn-refresh-leaderboard" class="btn-icon" title="Muat Semula Rekod">
+            🔄
+          </button>
+        </div>
+
+        <!-- API status notification / banner -->
+        <div id="leaderboard-notice" class="notice-box hidden"></div>
+
+        <!-- Loading Spinner Container -->
+        <div id="leaderboard-loading" class="loading-state">
+          <div class="loader-circle"></div>
+          <p>Sedang memuatkan senarai juara terkini...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="leaderboard-empty" class="empty-state hidden">
+          <span class="empty-icon">🌟</span>
+          <h3>Belum Ada Rekod!</h3>
+          <p>Jadilah murid pertama yang mencatat nama di papan pendahulu!</p>
+          <button id="btn-empty-play" class="btn btn-primary btn-md">
+            MULA BERMAIN SEKARANG
+          </button>
+        </div>
+
+        <!-- Error State -->
+        <div id="leaderboard-error" class="error-state hidden">
+          <span class="error-icon">⚠️</span>
+          <h3>Tidak Dapat Memuatkan Data</h3>
+          <p id="leaderboard-error-detail">Sila periksa sambungan internet atau tetapan API.</p>
+          <button id="btn-retry-leaderboard" class="btn btn-secondary btn-md">
+            🔄 Cuba Semula
+          </button>
+        </div>
+
+        <!-- Leaderboard Table / Cards List -->
+        <div id="leaderboard-list-container" class="leaderboard-list hidden">
+          <div class="leaderboard-table-header">
+            <span class="col-rank">KED.</span>
+            <span class="col-name">NAMA WIRA</span>
+            <span class="col-score">SKOR</span>
+            <span class="col-meta">KETEPATAN / TARIKH</span>
+          </div>
+          <div id="leaderboard-rows" class="leaderboard-rows">
+            <!-- Populated dynamically by script.js -->
+          </div>
+        </div>
+
+        <!-- Leaderboard Bottom Action -->
+        <div class="leaderboard-actions">
+          <button id="btn-leaderboard-start-play" class="btn btn-primary btn-block btn-lg">
+            🚀 MULA MISI SAYA
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================
+       MODAL: RUJUKAN SURAH AL-KAFIRUN LENGKAP
+       ========================================================= -->
+  <div id="modal-surah" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-surah-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-surah-title" class="modal-title">📖 Ulangkaji Surah Al-Kafirun (6 Ayat)</h3>
+        <button id="btn-close-modal" class="btn-close" aria-label="Tutup Rujukan">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="surah-bismillah" dir="rtl">
+          بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+        </div>
+
+        <div class="surah-verses-list">
+          <!-- Ayat 1 -->
+          <div class="verse-item">
+            <div class="verse-header">
+              <span class="verse-num">Ayat 1</span>
+            </div>
+            <div class="verse-arabic" dir="rtl">قُلْ يَا أَيُّهَا الْكَافِرُونَ ﴿١﴾</div>
+            <div class="verse-meaning">Katakanlah (wahai Muhammad): "Wahai orang-orang kafir!"</div>
+          </div>
+
+          <!-- Ayat 2 -->
+          <div class="verse-item">
+            <div class="verse-header">
+              <span class="verse-num">Ayat 2</span>
+            </div>
+            <div class="verse-arabic" dir="rtl">لَا أَعْبُدُ مَا تَعْبُدُونَ ﴿٢﴾</div>
+            <div class="verse-meaning">"Aku tidak akan menyembah apa yang kamu sembah."</div>
+          </div>
+
+          <!-- Ayat 3 -->
+          <div class="verse-item">
+            <div class="verse-header">
+              <span class="verse-num">Ayat 3</span>
+            </div>
+            <div class="verse-arabic" dir="rtl">وَلَا أَنْتُمْ عَابِدُونَ مَا أَعْبُدُ ﴿٣﴾</div>
+            <div class="verse-meaning">"Dan kamu bukan penyembah apa yang aku sembah."</div>
+          </div>
+
+          <!-- Ayat 4 -->
+          <div class="verse-item">
+            <div class="verse-header">
+              <span class="verse-num">Ayat 4</span>
+            </div>
+            <div class="verse-arabic" dir="rtl">وَلَا أَنَا عَابِدٌ مَا عَبَدْتُمْ ﴿٤﴾</div>
+            <div class="verse-meaning">"Dan aku tidak pernah menjadi penyembah apa yang kamu sembah."</div>
+          </div>
+
+          <!-- Ayat 5 -->
+          <div class="verse-item">
+            <div class="verse-header">
+              <span class="verse-num">Ayat 5</span>
+            </div>
+            <div class="verse-arabic" dir="rtl">وَلَا أَنْتُمْ عَابِدُونَ مَا أَعْبُدُ ﴿٥﴾</div>
+            <div class="verse-meaning">"Dan kamu tidak pernah pula menjadi penyembah apa yang aku sembah."</div>
+          </div>
+
+          <!-- Ayat 6 -->
+          <div class="verse-item">
+            <div class="verse-header">
+              <span class="verse-num">Ayat 6</span>
+            </div>
+            <div class="verse-arabic" dir="rtl">لَكُمْ دِينُكُمْ وَلِيَ دِينِ ﴿٦﴾</div>
+            <div class="verse-meaning">"Bagi kamu agama kamu, dan bagiku agamaku."</div>
+          </div>
+        </div>
+
+        <div class="surah-summary-note">
+          <strong>💡 Pengajaran Surah:</strong> Umat Islam wajib berpegang teguh kepada akidah tauhid dan menyembah Allah semata-mata, serta tidak mencampuradukkan ibadah dengan amalan agama lain.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-modal-close-action" class="btn btn-secondary btn-block">Faham & Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confetti Canvas for Celebrations -->
+  <canvas id="confetti-canvas" class="confetti-canvas" aria-hidden="true"></canvas>
+
+  <!-- JavaScript Scripts -->
+  <script src="config.js"></script>
+  <script src="questions.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
