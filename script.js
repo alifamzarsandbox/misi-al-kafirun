@@ -770,8 +770,10 @@ function renderRecentRecords(items) {
     row.innerHTML = `
       <div class="recent-left">
         <span class="recent-check-badge" title="Tamat Misi" aria-label="Selesai">✓</span>
-        <span class="recent-name" title="${escapedName}">${escapedName}</span>
-        <span class="recent-time">${relTime}</span>
+        <div class="recent-details">
+          <span class="recent-name" title="${escapedName}">${escapedName}</span>
+          <span class="recent-time">${relTime}</span>
+        </div>
       </div>
       <div class="recent-right">
         <span class="recent-score">${scoreVal} mata</span>
@@ -813,6 +815,19 @@ function renderLeaderboardRows(items) {
 
     row.className = `leaderboard-row ${rankClass} ${isCurrentUser ? "highlight-me" : ""}`;
 
+    // Format ketepatan dengan kemas (contoh jika Google Sheets pulangkan '1' untuk 100%)
+    let accuracyText = String(item.accuracy || "100%").trim();
+    if (accuracyText === "1" || accuracyText === "1.0") {
+      accuracyText = "100%";
+    } else if (!accuracyText.includes("%") && !isNaN(Number(accuracyText))) {
+      const num = Number(accuracyText);
+      if (num > 0 && num <= 1) {
+        accuracyText = Math.round(num * 100) + "%";
+      } else if (num > 1 && num <= 100) {
+        accuracyText = Math.round(num) + "%";
+      }
+    }
+
     row.innerHTML = `
       <div class="col-rank">
         <span class="rank-badge">${rank}</span>
@@ -825,7 +840,7 @@ function renderLeaderboardRows(items) {
         <span>⭐ ${item.score}</span>
       </div>
       <div class="meta-cell">
-        <div><strong>Ketepatan:</strong> ${escapeHtml(item.accuracy || "100%")}</div>
+        <div><strong>Ketepatan:</strong> ${escapeHtml(accuracyText)}</div>
         <div>${escapeHtml(item.date || "-")}</div>
       </div>
     `;
