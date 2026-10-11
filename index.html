@@ -409,6 +409,31 @@
           </div>
         </div>
 
+        <!-- SEKSYEN BAHARU: REKOD PENYERTAAN TERKINI (20 MURID TERAKHIR) -->
+        <div id="recent-records-section" class="recent-records-section hidden">
+          <div class="recent-records-header">
+            <span class="recent-header-icon" aria-hidden="true">👥</span>
+            <div class="recent-header-titles">
+              <h3 class="recent-title">REKOD PENYERTAAN TERKINI</h3>
+              <p class="recent-subtitle">20 murid terakhir menyelesaikan kuiz</p>
+            </div>
+          </div>
+
+          <div id="recent-records-container" class="recent-records-container" role="region" aria-label="Senarai 20 penyertaan terkini">
+            <div id="recent-records-list" class="recent-records-list">
+              <!-- Populated dynamically by script.js -->
+            </div>
+          </div>
+
+          <div id="recent-records-empty" class="recent-empty hidden">
+            <p>Belum ada penyertaan direkodkan.</p>
+          </div>
+
+          <div id="recent-records-error" class="recent-error hidden">
+            <p>Rekod penyertaan tidak dapat dimuatkan buat sementara waktu.</p>
+          </div>
+        </div>
+
         <!-- Leaderboard Bottom Action -->
         <div class="leaderboard-actions">
           <button id="btn-leaderboard-start-play" class="btn btn-primary btn-block btn-lg">
@@ -505,6 +530,7 @@
 
   <!-- JavaScript Scripts -->
   <script src="config.js"></script>
+  <script src="leaderboard-config.js"></script>
   <script src="questions.js"></script>
   <script src="script.js"></script>
 </body>

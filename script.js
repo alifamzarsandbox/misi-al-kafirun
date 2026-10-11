@@ -219,7 +219,8 @@ const gameState = {
   correctAnswersCount: 0,
   answered: false,
   isSubmittingScore: false,
-  scoreSubmittedSuccessfully: false
+  scoreSubmittedSuccessfully: false,
+  sessionId: ""
 };
 
 /* =========================================================================
@@ -308,6 +309,7 @@ function startNewGame() {
   gameState.answered = false;
   gameState.isSubmittingScore = false;
   gameState.scoreSubmittedSuccessfully = false;
+  gameState.sessionId = "sess_" + Date.now() + "_" + Math.random().toString(36).substring(2, 8);
 
   gameState.currentQuestions = generateSessionQuestions();
 
@@ -515,17 +517,31 @@ async function submitScoreToBackend() {
     return;
   }
 
+  // Sentiasa simpan ke storan lokal (offline recent & top10) serta-merta
+  if (typeof addLocalRecentRecord === "function") {
+    addLocalRecentRecord({
+      playerName: gameState.playerName,
+      score: gameState.score,
+      correctAnswers: gameState.correctAnswersCount,
+      totalQuestions: CONFIG.TOTAL_QUESTIONS,
+      accuracy: Math.round((gameState.correctAnswersCount / CONFIG.TOTAL_QUESTIONS) * 100) + "%",
+      timestamp: new Date().toISOString(),
+      sessionId: gameState.sessionId
+    });
+  }
+
   // Semak jika dalam mod demo (URL API belum dikonfigurasi)
   if (CONFIG.isDemoMode()) {
+    gameState.scoreSubmittedSuccessfully = true;
     syncSpinner.classList.add("hidden");
     retryBtn.classList.add("hidden");
     syncStatus.className = "cloud-sync-status demo";
-    syncText.textContent = "ℹ️ Mod Demo: Tetapkan URL API di config.js untuk menyimpan skor ke Google Sheets.";
-    console.warn("[MISI AL-KAFIRUN] Mod Demo Aktif. Sila masukkan URL Google Apps Script Web App dalam config.js untuk membolehkan Leaderboard awan.");
+    syncText.textContent = "ℹ️ Mod Demo: Disimpan di storan tempatan (Tetapkan URL API di config.js untuk Google Sheets).";
+    console.info("[MISI AL-KAFIRUN] Skor disimpan secara tempatan (Mod Demo).");
     return;
   }
 
-  // Sediakan penghantaran
+  // Sediakan penghantaran ke API
   gameState.isSubmittingScore = true;
   syncSpinner.classList.remove("hidden");
   retryBtn.classList.add("hidden");
@@ -534,20 +550,16 @@ async function submitScoreToBackend() {
 
   const payload = {
     playerName: gameState.playerName,
+    name: gameState.playerName,
     score: gameState.score,
     correctAnswers: gameState.correctAnswersCount,
     totalQuestions: CONFIG.TOTAL_QUESTIONS,
-    accuracy: Math.round((gameState.correctAnswersCount / CONFIG.TOTAL_QUESTIONS) * 100) + "%"
+    accuracy: Math.round((gameState.correctAnswersCount / CONFIG.TOTAL_QUESTIONS) * 100) + "%",
+    sessionId: gameState.sessionId,
+    timestamp: new Date().toISOString()
   };
 
   try {
-    /**
-     * NOTA INTEGRASI CORS GOOGLE APPS SCRIPT:
-     * Menggunakan fetch dengan Content-Type: text/plain menghalang browser daripada
-     * menghantar permintaan pra-penerbangan OPTIONS (CORS preflight).
-     * Google Apps Script akan menerima data dalam e.postData.contents,
-     * dan mengembalikan status 302 redirect yang mengandungi CORS header yang sah.
-     */
     const response = await fetch(CONFIG.API_URL, {
       method: "POST",
       headers: {
@@ -563,9 +575,7 @@ async function submitScoreToBackend() {
     let result = null;
     try {
       result = await response.json();
-    } catch (parseErr) {
-      // Jika respons bukan json boleh dibaca terus (cthnya redirect), kita sahkan respons status
-    }
+    } catch (parseErr) {}
 
     if (result && result.success === false) {
       throw new Error(result.error || "Ralat semasa menyimpan di Google Sheets.");
@@ -583,15 +593,74 @@ async function submitScoreToBackend() {
     syncSpinner.classList.add("hidden");
     retryBtn.classList.remove("hidden");
     syncStatus.className = "cloud-sync-status error";
-    syncText.textContent = "⚠️ Tidak dapat menyimpan ke Google Sheets.";
+    syncText.textContent = "⚠️ Tidak dapat menyimpan ke Google Sheets (Data disimpan di storan tempatan).";
   } finally {
     gameState.isSubmittingScore = false;
   }
 }
 
 /* =========================================================
-   8. SISTEM LEADERBOARD TOP 10
+   8. SISTEM LEADERBOARD TOP 10 & 20 REKOD PENYERTAAN TERKINI
    ========================================================= */
+
+/**
+ * Format timestamp menjadi masa relatif dalam Bahasa Melayu:
+ * - "Baru sahaja" (< 1 min)
+ * - "X min lalu" (< 60 min)
+ * - "X jam lalu" (< 24 jam)
+ * - "Semalam" (1 hari lalu)
+ * - Tarikh DD/MM/YYYY jika lebih lama
+ */
+function formatRelativeTime(dateInput) {
+  if (!dateInput) return "Baru sahaja";
+  let dateObj = null;
+
+  if (dateInput instanceof Date) {
+    dateObj = dateInput;
+  } else {
+    dateObj = new Date(dateInput);
+  }
+
+  if (isNaN(dateObj.getTime())) {
+    return String(dateInput);
+  }
+
+  const now = Date.now();
+  const diffMs = now - dateObj.getTime();
+
+  // Kurang daripada 1 minit atau waktu hadapan sedikit
+  if (diffMs < 60 * 1000) {
+    return "Baru sahaja";
+  }
+
+  // Kurang daripada 60 minit
+  const diffMinutes = Math.floor(diffMs / (60 * 1000));
+  if (diffMinutes < 60) {
+    return `${diffMinutes} min lalu`;
+  }
+
+  // Kurang daripada 24 jam
+  const diffHours = Math.floor(diffMs / (3600 * 1000));
+  if (diffHours < 24) {
+    return `${diffHours} jam lalu`;
+  }
+
+  // Antara 24 hingga 48 jam (Semalam)
+  const diffDays = Math.floor(diffMs / (86400 * 1000));
+  if (diffDays === 1) {
+    return "Semalam";
+  }
+
+  // Lebih lama -> Tarikh ringkas DD/MM/YYYY
+  const day = String(dateObj.getDate()).padStart(2, "0");
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const year = dateObj.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+/**
+ * Memuatkan KEDUA-DUA data: Top 10 Leaderboard & 20 Murid Terkini
+ */
 async function loadLeaderboard() {
   showScreen("screen-leaderboard");
 
@@ -602,70 +671,118 @@ async function loadLeaderboard() {
   const listContainer = document.getElementById("leaderboard-list-container");
   const rowsContainer = document.getElementById("leaderboard-rows");
   const errorDetail = document.getElementById("leaderboard-error-detail");
+  const recentSection = document.getElementById("recent-records-section");
 
   // Reset paparan
   loadingEl.classList.remove("hidden");
   emptyEl.classList.add("hidden");
   errorEl.classList.add("hidden");
   listContainer.classList.add("hidden");
+  if (recentSection) recentSection.classList.add("hidden");
   noticeBox.classList.add("hidden");
   rowsContainer.innerHTML = "";
 
-  // Jika Mod Demo (Belum pasang Web App URL)
-  if (CONFIG.isDemoMode()) {
-    loadingEl.classList.add("hidden");
-    noticeBox.innerHTML = `
-      <strong>💡 Makluman Pendidik / Penguji:</strong><br>
-      URL Web App Google Apps Script belum dimasukkan dalam <code>config.js</code>. 
-      Di bawah dipaparkan contoh format Leaderboard. Ikuti panduan dalam <code>google-apps-script/SETUP.md</code> untuk mengaktifkan sambungan Google Sheets sebenar!
-    `;
-    noticeBox.classList.remove("hidden");
-
-    // Muatkan data demo
-    renderLeaderboardRows([
-      { rank: 1, playerName: "Aiman Hafiz", score: 1000, accuracy: "100%", date: "10/10/2026" },
-      { rank: 2, playerName: "Nurul Sarah", score: 1000, accuracy: "100%", date: "10/10/2026" },
-      { rank: 3, playerName: "Muhammad Faris", score: 900, accuracy: "90%", date: "10/10/2026" },
-      { rank: 4, playerName: "Danish Irfan", score: 900, accuracy: "90%", date: "10/10/2026" },
-      { rank: 5, playerName: "Farisya Iman", score: 800, accuracy: "80%", date: "10/10/2026" },
-      { rank: 6, playerName: "Adam Wafiy", score: 800, accuracy: "80%", date: "10/10/2026" }
-    ]);
-    return;
-  }
-
-  // Muat data sebenar dari API Google Apps Script
   try {
-    const fetchUrl = `${CONFIG.API_URL}${CONFIG.API_URL.includes("?") ? "&" : "?"}action=getLeaderboard&t=${Date.now()}`;
-    const res = await fetch(fetchUrl, {
-      method: "GET",
-      cache: "no-store"
-    });
+    // Panggilan API tunggal melalui leaderboard-config.js
+    const result = typeof fetchTop10Leaderboard === "function" 
+      ? await fetchTop10Leaderboard()
+      : { success: false, error: "Modul leaderboard-config.js belum dimuatkan." };
 
-    if (!res.ok) {
-      throw new Error(`HTTP Error ${res.status}`);
-    }
-
-    const json = await res.json();
     loadingEl.classList.add("hidden");
 
-    if (!json.success) {
-      throw new Error(json.error || "Gagal memproses data leaderboard.");
+    // Tunjukkan notis demo jika belum ada URL API sebenar
+    if (result.isDemo) {
+      noticeBox.innerHTML = `
+        <strong>💡 Makluman Pendidik / Penguji:</strong><br>
+        URL Web App Google Apps Script belum dimasukkan dalam <code>config.js</code>. 
+        Data di bawah dipaparkan daripada storan tempatan (Mod Demo). Ikuti panduan dalam <code>google-apps-script/SETUP.md</code> untuk sambungan awan Google Sheets.
+      `;
+      noticeBox.classList.remove("hidden");
+    } else if (result.isFallback) {
+      noticeBox.innerHTML = `
+        <strong>ℹ️ Mod Luar Talian (Offline):</strong><br>
+        Tidak dapat menyambung ke Google Sheets buat sementara waktu. Memaparkan rekod yang tersimpan dalam pelayar web anda.
+      `;
+      noticeBox.classList.remove("hidden");
     }
 
-    const list = (json.data && json.data.leaderboard) ? json.data.leaderboard : [];
-
-    if (list.length === 0) {
+    // 1. Paparkan Top 10
+    const topRecords = (result && result.records && Array.isArray(result.records)) ? result.records : [];
+    if (topRecords.length === 0) {
       emptyEl.classList.remove("hidden");
     } else {
-      renderLeaderboardRows(list);
+      renderLeaderboardRows(topRecords);
     }
+
+    // 2. Paparkan 20 Rekod Penyertaan Terkini
+    const recentRecords = (result && result.recent && Array.isArray(result.recent)) ? result.recent : [];
+    renderRecentRecords(recentRecords);
 
   } catch (err) {
     console.error("Ralat mengambil data leaderboard:", err);
     loadingEl.classList.add("hidden");
     errorEl.classList.remove("hidden");
-    errorDetail.textContent = `Punca: ${err.message || "Ralat sambungan rangkaian."}. Sila semak status Web App di Google Apps Script.`;
+    if (errorDetail) {
+      errorDetail.textContent = `Punca: ${err.message || "Ralat sambungan rangkaian."}. Sila semak status Web App di Google Apps Script.`;
+    }
+    const recentError = document.getElementById("recent-records-error");
+    if (recentError) recentError.classList.remove("hidden");
+    if (recentSection) recentSection.classList.remove("hidden");
   }
+}
+
+/**
+ * Menjana baris DOM untuk 20 Rekod Penyertaan Terkini
+ */
+function renderRecentRecords(items) {
+  const section = document.getElementById("recent-records-section");
+  const list = document.getElementById("recent-records-list");
+  const empty = document.getElementById("recent-records-empty");
+  const error = document.getElementById("recent-records-error");
+
+  if (!section || !list) return;
+
+  list.innerHTML = "";
+  if (error) error.classList.add("hidden");
+
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    if (empty) empty.classList.remove("hidden");
+    section.classList.remove("hidden");
+    return;
+  }
+
+  if (empty) empty.classList.add("hidden");
+
+  // Hadkan kepada 20 murid terakhir
+  const top20 = items.slice(0, 20);
+
+  top20.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "recent-record-row";
+
+    let rawName = String(item.playerName || item.name || "Murid").trim();
+    if (rawName.length > 15) rawName = rawName.substring(0, 15);
+    const escapedName = escapeHtml(rawName);
+
+    const relTime = formatRelativeTime(item.timestamp || item.date);
+    const scoreVal = typeof item.score !== "undefined" ? item.score : 0;
+
+    row.innerHTML = `
+      <div class="recent-left">
+        <span class="recent-check-badge" title="Tamat Misi" aria-label="Selesai">✓</span>
+        <span class="recent-name" title="${escapedName}">${escapedName}</span>
+        <span class="recent-time">${relTime}</span>
+      </div>
+      <div class="recent-right">
+        <span class="recent-score">${scoreVal} mata</span>
+        <span class="recent-status-pill">Selesai</span>
+      </div>
+    `;
+
+    list.appendChild(row);
+  });
+
+  section.classList.remove("hidden");
 }
 
 function renderLeaderboardRows(items) {

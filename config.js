@@ -16,7 +16,6 @@ const CONFIG = {
   LEADERBOARD_LIMIT: 10,            // Bilangan kedudukan teratas untuk dipaparkan
 
   // URL Web App Google Apps Script
-  // Masukkan URL Web App anda di sini selepas selesai proses deployment (cth: https://script.google.com/macros/s/AKfycb.../exec)
   API_URL: "https://script.google.com/macros/s/AKfycbwHxajH30k5sgLBeMWZwwJdytsy-xbEQItJKSTAV7m-CQPud2T2oGTCOB7lr7Jb1b2Rbw/exec",
 
   // Tetapan Audio & Efek
